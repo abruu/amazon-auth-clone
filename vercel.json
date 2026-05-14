@@ -3,10 +3,18 @@
   "outputDirectory": "dist/client",
   "installCommand": "npm install",
   "framework": null,
-  "rewrites": [
+  "routes": [
     {
-      "source": "/(.*)",
-      "destination": "/index.html"
+      "src": "/assets/(.*)",
+      "dest": "/assets/$1"
+    },
+    {
+      "src": "/amazon-logo.png",
+      "dest": "/amazon-logo.png"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/api/index"
     }
   ]
 }
