@@ -127,7 +127,7 @@ function LoginPage() {
           <p className="mt-4 text-[12px] leading-snug text-foreground/80">
             By continuing, you agree to Amazon's{" "}
             <a className="text-amazon-link hover:text-amazon-link-hover hover:underline" href="#">
-              Conditions of Use
+              Conditions
             </a>{" "}
             and{" "}
             <a className="text-amazon-link hover:text-amazon-link-hover hover:underline" href="#">
