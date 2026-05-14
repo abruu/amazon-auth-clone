@@ -59,12 +59,36 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+  --color-amazon-navy: var(--amazon-navy);
+  --color-amazon-navy-foreground: var(--amazon-navy-foreground);
+  --color-amazon-yellow: var(--amazon-yellow);
+  --color-amazon-yellow-hover: var(--amazon-yellow-hover);
+  --color-amazon-yellow-foreground: var(--amazon-yellow-foreground);
+  --color-amazon-link: var(--amazon-link);
+  --color-amazon-link-hover: var(--amazon-link-hover);
+  --color-amazon-border: var(--amazon-border);
+  --color-amazon-card: var(--amazon-card);
+  --color-amazon-input: var(--amazon-input);
+  --color-amazon-input-focus-ring: var(--amazon-input-focus-ring);
+  --font-amazon: "Amazon Ember", "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 :root {
-  --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.129 0.042 264.695);
+  --radius: 0.5rem;
+  /* Amazon-inspired palette */
+  --background: oklch(0.985 0.003 90);            /* page cream */
+  --foreground: oklch(0.18 0.02 250);             /* near-black ink */
+  --amazon-navy: oklch(0.22 0.04 250);            /* #131A22-ish */
+  --amazon-navy-foreground: oklch(0.985 0.003 90);
+  --amazon-yellow: oklch(0.88 0.14 90);           /* #FFD814 */
+  --amazon-yellow-hover: oklch(0.84 0.15 85);     /* #F7CA00 */
+  --amazon-yellow-foreground: oklch(0.18 0.02 250);
+  --amazon-link: oklch(0.45 0.09 245);            /* #007185 link blue */
+  --amazon-link-hover: oklch(0.4 0.13 35);        /* #C7511F orange-red */
+  --amazon-border: oklch(0.78 0.01 90);           /* #888 / #ddd mix */
+  --amazon-card: oklch(1 0 0);
+  --amazon-input: oklch(1 0 0);
+  --amazon-input-focus-ring: oklch(0.78 0.13 80); /* warm yellow ring */
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.129 0.042 264.695);
   --popover: oklch(1 0 0);
